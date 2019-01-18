@@ -27,6 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'intranet.apps.IntranetConfig',
+    # MY APPS
+    'ressources',
+    'clients',
 ]
 
 MIDDLEWARE = [
