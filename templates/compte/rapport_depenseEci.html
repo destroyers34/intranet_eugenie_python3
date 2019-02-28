@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+{% block title %}Depenses{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block nav-cdd %}<li class="dropdown active">{% endblock nav-cdd %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Compte de {{ depense_eci_list.0.employe }}</h3>
+            <h3>{{ date1|date:"Y-m-d" }} au {{ date2|date:"Y-m-d" }}</h3>
+        </div>
+    </div>
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <a class="btn btn-primary pull-right" target="_blank" href="print"><i class="glyphicon glyphicon-print"></i> Imprimer</a>
+                <table id="stacktable" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th ># Facture</th>
+                            <th >Date</th>
+                            <th >Detail</th>
+                            <th >Projet</th>
+                            <th >GL</th>
+                            <th >TPS/HST</th>
+                            <th >TVQ</th>
+                            <th >Montant</th>
+                            <th >Total</th>
+                            <th >Facture</th>
+                            <th >Approuve par:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for depense in depense_eci_list %}
+                            <tr>
+                                <td>ECI_{{ depense.id }}</td>
+                                <td>{{ depense.date }}</td>
+                                <td>{{ depense.detail}} </td>
+                                <td>{{ depense.projet }}</td>
+                                <td>{{ depense.gl }}</td>
+                                <td>{{ depense.tps|default_if_none:"0.00" }} $</td>
+                                <td>{{ depense.tvq|default_if_none:"0.00" }} $</td>
+                                <td>{{ depense.montant|default_if_none:"0.00" }} $</td>
+                                <td>{{ depense.fac_total|default_if_none:"0.00" }} $</td>
+                                <td>{% if depense.photo %}
+                                        <a target="_blank" href="{{ depense.photo.url }}"><i class="glyphicon glyphicon-picture"></i></a>
+                                    {% else %}
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    {% endif %}
+                                </td>
+                                <td>{% if depense.approved_by %}
+                                        {{ depense.approved_by }} le {{ depense.approved_on }}
+                                    {% else %}
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a class="btn btn-primary pull-right" target="_blank" href="print"><i class="glyphicon glyphicon-print"></i> Imprimer</a>
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-12 pull-right">
+            <div class="jumbotron">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <th>GL</th>
+                        <th>Montant</th>
+                    </tr>
+                    {% for totaux in subtotal %}
+                    <tr>
+                        <td>{{ totaux.gl__numero }}: {{ totaux.gl__description }}</td>
+                        <td>{{ totaux.subtotal|default_if_none:"0.00" }} $</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>21403: TPS/TVH</td>
+                        <td>{{ total.t_tps|default_if_none:"0.00" }} $</td>
+                    </tr>
+                    <tr>
+                        <td>21407: TVQ</td>
+                        <td>{{ total.t_tvq|default_if_none:"0.00" }} $</td>
+                    </tr>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ total.total|default_if_none:"0.00" }} $</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $('#stacktable').stacktable();
+{% endblock jquery %}

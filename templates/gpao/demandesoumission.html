@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>GEI | GPAO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="{{STATIC_URL}}css/bootstrap.css" rel="stylesheet">
+	<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+	  }
+    </style>
+    <link href="{{STATIC_URL}}css/bootstrap-responsive.css" rel="stylesheet" >
+	<link href="{{STATIC_URL}}css/extra.css" rel="stylesheet" >
+	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.js"></script>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+<div class="container-fluid">
+<div class="well">
+    <div class="row-fluid">
+        <div class="span12">
+            <h4 style='text-align:right'>Demande de Soumission</h4>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div style='float: left;margin-top: 40px;' >
+            <pre>
+DE:    EUGÉNIE CANADA INC.
+       3382 Jacob-Jordan
+       Terrebonne, Qc. J6X 4J6
+
+       Tél: 450-313-1321</pre>
+            </div>
+            <img style='float: right;' src='{{ STATIC_URL }}img/logo_eugenie.png' />
+       </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+        <pre style='float: right;margin-top: -60px;'>
+DATE...........: {% now "SHORT_DATE_FORMAT" %}
+NO. DE PROJET..: {{ no_nm }}</pre>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+                <table style='background-color: rgba(255, 255, 255, 0)' width='100%' border="0">
+                    <thead>
+                        <tr style="border-bottom: solid black 1px">
+                            <th>Quantité</th>
+                            <th>Pièces</th>
+                            <th>Prix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% load gpao_filters %}
+                        {% for form in formset %}
+                            {% if form.choix.value == True %}
+                            <tr>
+                                <td style="text-align: center">{{ form.qt.value }}</td>
+                                <td>{{ form.piece.value|get_piece_display }}</td>
+                                <td style="text-align: center">..................$</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div></div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+﻿{% extends "base.html" %}
+{% block title %}Blocs EuGénie Canada Inc.{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Derniers 20 blocs de temps ajouter</h3>
+        </div>
+    </div>
+    <div class="row top-buffer">
+        <div class="col-md-12 jumbotron">
+            <form class="form-inline" action="" method="post">{% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Affichez les blocs de l'employé choisi durant cette periode :</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label> Employe:</label>
+                        {{form.employe}}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="datepicker1"> Date début:</label>
+                        <input class="input-small" id="datepicker1" type="text" name="date_debut" />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="datepicker2"> Date fin:</label>
+                        <input class="input-small" type="text" name="date_fin" id="datepicker2" value="{{ date }}" />
+                    </div>
+                    <div class="col-md-3">
+                        <input class="btn btn-primary" type="submit" value="Rechercher" />
+                        {% if form.errors %}
+                            <p>Vous n'avez pas remplie les champs correctement</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 top-buffer jumbotron">
+            <table id="simple-example-table" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Employé</th>
+                        <th>Date</th>
+                        <th>Projet</th>
+                        <th>Tache</th>
+                        <th>Temps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for blocs in last_blocs %}
+                        <tr>
+                            <td>{{ blocs.employe }}</td>
+                            <td>{{ blocs.date }}</td>
+                            <td>{{ blocs.projet }}</td>
+                            <td>{{ blocs.tache }}</td>
+                            <td>{{ blocs.temps }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $( "#datepicker1" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $( "#datepicker2" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $('#simple-example-table').stacktable();
+{% endblock jquery %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}GPAO{% endblock title %}
+{% block nav-gpao %}<li class="dropdown active">{% endblock nav-gpao %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3 well">
+            <h4>Formulaire Soumission</h4>
+            <form id="myForm" method="post" action="">
+                {{ formset.management_form }}
+                <table border="0">
+                    <thead>
+                        <tr>
+                            <th width='33%'>Choisir</th>
+                            <th width='33%'>Piece</th>
+                            <th width='33%'>Qt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                            {% csrf_token %}
+                            <tr>
+                                <td>{{ form.choix.errors }}</td>
+                                <td>{{ form.piece.errors }}</td>
+                                <td>{{ form.qt.errors }}</td>
+                            </tr>
+                            <tr>
+                                {{ form.id }}
+                                <td style="text-align: center">{{ form.choix }}</td>
+                                <td>{{ form.piece }}</td>
+                                <td>{{ form.qt }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input class="btn btn-primary pull-right" type="submit" value="Imprimer" />
+            </form>
+        </div>
+    </div>
+{% endblock content %}

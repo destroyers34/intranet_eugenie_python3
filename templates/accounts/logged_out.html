@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <img class="img-responsive center-block" src="{{ STATIC_URL }}img/main.png">
+        </div>
+    </div>
+
+    <div class="row top-buffer row-centered">
+        <div class="col-md-3 col-xs-12 col-centered">
+            <div class="jumbotron">
+                <form action="" method="post" class="form-signin top-buffer">
+                    {% csrf_token %}
+                    <h4 class="text-success text-center">Vous avez été déconnecter</h4>
+                    <button class="btn btn-primary center-block" type="submit">Ok</button>
+                    <input type="hidden" name="next" value="/" />
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

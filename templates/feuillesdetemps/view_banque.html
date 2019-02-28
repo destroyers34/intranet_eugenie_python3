@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Banque d'heures{% endblock title %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3 well">
+            <div class="pull-left">
+                <br />
+                <h2>Banque d'heures</h2>
+            </div>
+            <div class="pull-right text-right">
+                <img width="200" src="{{ STATIC_URL }}img/main.png"><br /><br />
+            </div>
+            <div>
+                {% if employes.0.banque_heure %}
+                <table id="table1" class="table table-bordered table-condensed">
+                    <thead>
+                        <th>Compagnie</th>
+                        <th>Employé</th>
+                        <th>Heures en banque</th>
+                    </thead>
+                    <tbody>
+                        {% for employe in employes %}
+                            <tr>
+                                <td>
+                                    {{ employe.compagnie }}
+                                </td>
+                                <td>
+                                    {{ employe }}
+                                </td>
+                                <td class='
+                                {% if employe.banque_heure < 0 %}
+                                    text-error
+                                {% elif employe.banque_heure > 0 %}
+                                    text-success
+                                {% endif %}
+                                    ' style="text-align: right">
+                                        {{ employe.banque_heure }}
+                                    </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="summar1">
+                    <table class="TF table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th align="left"></th>
+                                <th style="width: 32%">Heures en banque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th style="text-align: right">Total des employés affichés:</th>
+                                <td id="sum1" style="text-align: right"></td>
+                            </tr>
+                            <tr>
+                                <th style="text-align: right">Total de tout les employés:</th>
+                                <td style="text-align: right">{{ total.total }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <script type="text/javascript" language="javascript" src="{{STATIC_URL}}TableFilter/tablefilter.js"></script>
+                <script language="javascript" type="text/javascript">
+                    var tf_table1  = {
+                        col_0: "select",
+                        col_1: "select",
+                        col_2: "none",
+                        btn_reset: true,
+                        display_all_text: "Tout Afficher",
+                        rows_counter: true,
+                        rows_counter_text: "Employés: ",
+                        popup_filters: true,
+                        col_operation: {
+                            id: ["sum1"],
+                            col: [2],
+                            operation: ["sum"],
+                            decimal_precision: [2]
+                        }
+                    };
+                    setFilterGrid("table1",1,tf_table1);
+                </script>
+                {% else %}
+                    <br /><br /><br /><br /><br /><br /><br /><br />
+                    <h4>Il n'y a aucune heure en banque</h4>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

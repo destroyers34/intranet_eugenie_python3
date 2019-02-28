@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+{% block title %}Rapport de temps des tâches ECI{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Rapport de temps des tâches</h3>
+        </div>
+    </div>
+    <div class="row top-buffer jumbotron">
+        <div class="col-md-12">
+            <div class="pull-right">
+                <a href="{% url 'print_liste_taches_eci' %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                <a href="{% url 'xls_liste_taches_eci' %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+            </div>
+        </div>
+        <div class="col-md-12 top-buffer">
+            <table id="tachetable" class="table table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Tâche</th>
+                        <th>Temps</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th class="total">Total:</th>
+                        <th class="total">{{total.heures}} H</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for tache in taches %}
+                        <tr>
+                            <td>
+                                {% if tache.heure %}
+                                    <a href="{% url 'tache_details_eci' tache.numero %}">{{tache.numero}} {{tache.description}}</a>
+                                {% else %}
+                                    {{tache.numero}} {{tache.description}}
+                                {% endif %}
+                            </td>
+                            <td class="text-right">{{tache.heure|default:"0,00"}} H</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="pull-right">
+            <div class="col-md-12">
+                <a href="{% url 'print_liste_taches_eci' %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                <a href="{% url 'xls_liste_taches_eci' %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $('#tachetable').stacktable();
+{% endblock jquery %}

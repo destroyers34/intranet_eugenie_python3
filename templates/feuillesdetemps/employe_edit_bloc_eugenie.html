@@ -1,0 +1,99 @@
+﻿{% extends "base.html" %}
+{% block title %}Consultation des feuilles de temps non-approuvé{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <style media="screen" type="text/css">
+        textarea {
+            height: 40px;
+            resize:none;
+        }
+            input, textarea{
+            width: 175px;
+        }
+    </style>
+{% endblock extrahead %}
+{% block jquery %}
+    $('.date').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+{% endblock jquery %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset2 well">
+            <div class="pull-left">
+                <h4>EuGénie Canada Inc.</h4>
+                <h4>Feuilles de temps non-approuvé</h4>
+                <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+            </div>
+            <div class="pull-right text-right">
+                <img width="200" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+            </div>
+            {% if formset.0.instance %}
+                <div>
+                    <form id="blocForm" class="form-inline" method="post" autocomplete="off" action="">{% csrf_token %}
+                        <table id="table1" class="table table-bordered table-condensed">
+                            <thead>
+                                <th>Date</th>
+                                <th>Projet</th>
+                                <th>Tâche</th>
+                                <th>Temps</th>
+                                <th>Banque</th>
+                                <th>Notes</th>
+                            </thead>
+                            <tbody>
+                                {% for form in formset %}
+                                    {{ form.id }}
+                                    <tr>
+                                        <td>
+                                            {% if form.date.errors %}
+                                                {{ form.date.errors }}
+                                            {% endif %}
+                                            <input class='date' type="text" name="{{ form.date.html_name }}" id="id_{{ form.date.html_name }}" {% if form.date.value %}value='{{ form.instance.date.year }}-{{ form.instance.date.month }}-{{ form.instance.date.day }}'{% endif %}/>
+                                        </td>
+                                        <td>
+                                            {% if form.projet.errors %}
+                                                {{ form.projet.errors }}
+                                            {% endif %}
+                                            {{ form.projet }}
+                                        </td>
+                                        <td>
+                                            {% if form.tache.errors %}
+                                                {{ form.tache.errors }}
+                                            {% endif %}
+                                            {{ form.tache }}
+                                        </td>
+                                        <td>
+                                            {% if form.temps.errors %}
+                                                {{ form.temps.errors }}
+                                            {% endif %}
+                                            {{ form.temps }}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {% if form.banque.errors %}
+                                                {{ form.banque.errors }}
+                                            {% endif %}
+                                            {{ form.banque }}
+                                        </td>
+                                        <td>
+                                            {% if form.note.errors %}
+                                                {{ form.note.errors }}
+                                            {% elif form.errors %}
+                                                <ul class='errorlist'><li>&nbsp</li></ul>
+                                            {% endif %}
+                                            {{ form.note }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {{ formset.management_form }}
+                            </tbody>
+                        </table>
+                        <p><input class="btn btn-primary" type="submit" value="Sauvegarder" /></p>
+                    </form>
+                </div>
+            {% else %}
+                <br /><br /><br /><br /><br /><br /><br />
+                <h3 class="text-success">Vous n'avez aucun bloc de temps non-approuvé</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% block title %}Depenses{% endblock title %}
+{% block nav-cdd %}<li class="dropdown active">{% endblock nav-cdd %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Ajout/Modification d'une dépense</h3>
+        </div>
+    </div>
+    <div class="row top-buffer row-centered">
+        <div class="col-md-9 col-xs-12 col-centered">
+            <div class="jumbotron">
+                <p>Voulez-vous vraiment supprimer cette dépense?</p>
+                {{ depense_eci }}
+                <form method="POST" action=".">
+                    {% csrf_token %}
+                    <input type="hidden" name="depense_eci_id" value="{{ depense_eci.id }}">
+                    <input class="btn btn-danger top-buffer" type="submit" value="Oui" />
+                    <a class="btn btn-primary top-buffer" href="{% url 'depense_eci_list' %}">Non</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

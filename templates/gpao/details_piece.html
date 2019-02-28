@@ -1,0 +1,50 @@
+﻿{% extends "base.html" %}
+{% load admin_urls %}
+{% block title %}GPAO{% endblock title %}
+{% block nav-gpao %}<li class="dropdown active">{% endblock nav-gpao %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3">
+            <div class="well">
+                <div class="row-fluid">
+                    <div class="pull-left">
+                        <h4>GPAO</h4>
+                        <h4>{{piece.reference}} {{piece.designation}}</h4>
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-primary" href="{{ piece.plan.url }}">Plan de définition</a>
+                        <a class="btn btn-primary" href="{% url 'admin:gpao_piece_change' piece.id %}">Modifier la pièce</a>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <p>Date: {{piece.date}}</p>
+                    <p>Format papier: {{piece.get_format_papier_display}}</p>
+                    <p>Réf. commerciale: {{piece.ref_commercial}}</p>
+                    <p>Réf. mécanique: {{piece.ref_mecanique}}</p>
+                    <p>Brute: {{piece.brute}}</p>
+                    <p>Soudure: {% if piece.soudure %}Oui{% else %}Non{% endif %}</p>
+                    <p>Finition: {{piece.get_finition_display}}</p>
+                    <p>Commentaires: {{piece.commentaires}}</p>
+
+                    <h5 class="text-center">Cette pièce se retrouve dans les NMs suivant:</h5>
+                    <table class="span8 offset2 table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Désignation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lien in piece.get_nm %}
+                                <tr>
+                                    <td><a href="">{{lien.from_nm.reference}}</a></td>
+                                    <td>{{lien.from_nm.designation}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+﻿<h3>Techno-Pro Experts Inc.</h3>
+<h3>Liste des projets par clients</h3>
+<table>
+	<tr>
+		<th>Clients</th>
+		<th>Numéros</th>
+		<th>Noms</th>
+	</tr>
+{% for clients in liste_clients %}
+{% if clients.liste_projets|length > 0 %}
+	<tr>
+	<td>{{clients.nom}}</td>
+	{% for projets in clients.liste_projets %}
+		{% if forloop.first %}{% else %}
+		<td></td>
+		{% endif %}
+		<td>{{ projets.numero }}</td>
+		<td>{{ projets.nom }}</td>
+		</tr>
+		<tr>
+	{% endfor %}
+	{% endif %}
+{% endfor %}
+</table>

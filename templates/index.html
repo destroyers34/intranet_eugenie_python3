@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block content %}
+    {% if user.is_authenticated %}
+            <div class="row top-buffer">
+                <div class="col-md-offset-2 col-md-6 col-xs-12">
+                    <div class="jumbotron">
+                        <h1>Bienvenue!</h1>
+                        <p>Voici le nouvelle intranet du Groupe EuGenie.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12 pull-right">
+                    <div class="jumbotron">
+                        <h3>Mes dépenses ECI</h3>
+                        {% if factures %}
+                            <table id="stacktable" class="table table-striped table-bordered table-condensed top-buffer">
+                                <thead>
+                                    <tr>
+                                        <th class="center-text">ID</th>
+                                        <th class="center-text">Date</th>
+                                        <th class="center-text">Detail</th>
+                                        <th class="center-text">Montant</th>
+                                        <th class="center-text">Approuve</th>
+                                        <th class="center-text">Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for f in factures %}
+                                        <tr>
+                                            <td class="center-text">{{user.employe.compagnie.code}}_{{ f.id }}</td>
+                                            <td class="center-text">{{ f.date }}</td>
+                                            <td class="center-text">{{ f.detail }}</td>
+                                            <td class="center-text">{{ f.fac_total }}$</td>
+                                            <td class="center-text">{% if f.approuve %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{% endif %}</td>
+                                            <td class="center-text"><a class="btn btn-primary" href="{% url 'depense_eci_edit' f.id %}"><i class="glyphicon glyphicon-pencil glyphicon-white"></i></a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="center-text">Total</td>
+                                        <td class="center-text"></td>
+                                        <td class="center-text"></td>
+                                        <td class="center-text">{{ fac_total.total|default_if_none:"0,00" }}$</td>
+                                        <td class="center-text"></td>
+                                        <td class="center-text"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {% else %}
+                            <p>Vous n'avez aucune dépense courante.</p>
+                        {% endif %}
+                        <a class="btn btn-primary btn-lg" href="{% url 'depense_eci_create' %}">Ajouter <span class="glyphicon glyphicon-plus glyphicon-white"></span></a>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-1 col-md-offset-3">
+                    <h4>Ajouter</h4>
+                    <a href="{% url 'employe_add_bloc_eugenie' %}">
+                        <img class="center-block" src="{{ STATIC_URL }}img/timesheet.png">
+                    </a>
+                </div>
+                <div class="col-xs-12 col-md-1 ">
+                    <h4>Consulter</h4>
+                    <a href="{% url 'employe_edit_bloc_eugenie' %}">
+                        <img class="center-block" src="{{ STATIC_URL }}img/consult.png">
+                    </a>
+                </div>
+                {% if perms.feuilles_de_temps.superviseur_eugenie %}
+                <div class="col-xs-12 col-md-1 ">
+                    <h4>Approuver</h4>
+                    <a href="{% url 'bloc_eugenie_approve' %}">
+                        <img class="center-block" src="{{ STATIC_URL }}img/approuve.png">
+                    </a>
+                </div>
+                <div class="col-xs-12 col-md-1 ">
+                    <h4>Banque</h4>
+                    <a href="{% url 'view_banque' %}">
+                        <img class="center-block" src="{{ STATIC_URL }}img/banque.jpg">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+    {% endif %}
+    {% else %}
+        <div class="container-fluid">
+            <div class="row top-buffer"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <img class="img-responsive center-block" src="{{ STATIC_URL }}img/main.png">
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-xs-6 col-md-3 text-center"><img class="img-responsive center-block top-buffer" src="{{ STATIC_URL }}img/logo_eugenie.png"></div>
+                <div class="col-xs-6 col-md-3 text-center"><img class="img-responsive center-block top-buffer" src="{{ STATIC_URL }}img/logo_jrc_scale.png"></div>
+                <div class="col-xs-6 col-md-3 text-center"><img class="img-responsive center-block top-buffer" src="{{ STATIC_URL }}img/logo_tpe_scale.png"></div>
+                <div class="col-xs-6 col-md-3 text-center"><img class="img-responsive center-block top-buffer" src="{{ STATIC_URL }}img/logo_engrenage_scale.png"></div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $('#stacktable').stacktable();
+{% endblock jquery %}

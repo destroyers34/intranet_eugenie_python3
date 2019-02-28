@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Listes de prix{% endblock title %}
+{% block nav-liste %}<li class="dropdown active">{% endblock nav-liste %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="{% if user.is_superuser %}span8 offset2{% else %}span6 offset3{% endif %} well">
+            <div class="hidden-print">
+                <h3>Machine</h3>
+                <h4>{{ machine.numero }}</h4>
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            {% if user.is_superuser %}
+                                <th>Prix liste</th>
+                                <th>Cost&nbsp;($CA)</th>
+                            {% endif %}
+                            <th>Prix vente&nbsp;($CA)</th>
+                            {% if user.is_superuser %}
+                                <th>Profit&nbsp;($CA)</th>
+                                <th>B.B</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan='{% if machine.details %}2{% else %}1{% endif %}'>{{ machine.numero }}</td>
+                            <td>{{ machine.description }}</td>
+                            {% if user.is_superuser %}
+                                <td style="text-align: right;">{{ machine.prix_fournisseur|floatformat:2|intcomma }}&nbsp;{{ machine.fournisseur.devise.symbole }}</td>
+                                <td style="text-align: right;">{{ machine.cost|floatformat:2|intcomma }}&nbsp;$</td>
+                            {% endif %}
+                            <td style="text-align: right;">{{ machine.plMin|floatformat:2|intcomma }}&nbsp;$</td>
+                            {% if user.is_superuser %}
+                                <td style="text-align: right;">{{ machine.profit|floatformat:2|intcomma }}&nbsp;$</td>
+                                <td style="text-align: right;">{{ machine.profit_pourcent|floatformat:2|intcomma }}&nbsp;%</td>
+                            {% endif %}
+                            {% if machine.details %}
+                                <tr>
+                                    <td colspan='{% if user.is_superuser %}6{% else %}2{% endif %}'>
+                                        {{machine.details}}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Options</h4>
+                {% if machine.options_machine.count != 0 %}
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Choix</th>
+                                <th>Code</th>
+                                {% if user.is_superuser %}
+                                    <th>Prix liste</th>
+                                    <th>Cost&nbsp;($CA)</th>
+                                {% endif %}
+                                <th>Prix vente&nbsp;($CA)</th>
+                                {% if user.is_superuser %}
+                                    <th>Profit&nbsp;($CA)</th>
+                                    <th>B.B</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <form method="post" action="">
+                                {% for option in machine.options_machine.all %}
+                                    <tr>
+                                        <td style="width:5%;text-align:center;vertical-align:middle;border-bottom: 1px solid black;" rowspan="2">
+                                            <input {{ option.checked }} id="id_form-{{ forloop.counter0 }}-calcul" name="form-{{ forloop.counter0 }}-calcul" type="checkbox">
+                                            <input id="id_form-{{ forloop.counter0 }}-id" name="form-{{ forloop.counter0 }}-id" value='{{ option.id }}' type="hidden">
+                                        </td>
+                                        <td style='vertical-align:middle;border-bottom: 1px solid black;width:15%' rowspan="2">
+                                            <input readonly='True' style='width:92%;' id="id_form-{{ forloop.counter0 }}-numero" maxlength="100" name="form-{{ forloop.counter0 }}-numero" type="text" value="{{ option.numero }}">
+                                        </td>
+                                        <td colspan="{% if user.is_superuser %}6{% else %}2{% endif %}">{{ option.details }}</td>
+                                    </tr>
+                                    <tr>
+                                        {% if user.is_superuser %}
+                                            <td style="text-align: right;border-bottom: 1px solid black;">{{ option.prix_fournisseur|floatformat:2|intcomma }}&nbsp;{{ option.fournisseur.devise.symbole }}</td>
+                                            <td style="text-align: right;border-bottom: 1px solid black;">{{ option.cost|floatformat:2|intcomma }}&nbsp;$</td>
+                                        {% endif %}
+                                        <td style="text-align: right;border-bottom: 1px solid black;">{{ option.plMin|floatformat:2|intcomma }}&nbsp;$</td>
+                                        {% if user.is_superuser %}
+                                            <td style="text-align: right;border-bottom: 1px solid black;">{{ option.profit|floatformat:2|intcomma }}&nbsp;$</td>
+                                            <td style="text-align: right;border-bottom: 1px solid black;">{{ option.profit_pourcent|floatformat:2|intcomma }}&nbsp;%</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    {{ formset.management_form }}
+                                    <td style="text-align: right;background-color: transparent" colspan='{% if user.is_superuser %}7{% else %}3{% endif %}'>
+                                        <input class="btn btn-primary" type="submit" value="Calculer" />
+                                        {% csrf_token %}
+                                    </td>
+                                </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h5>Aucune option n'est disponible pour cette machine</h5>
+                {% endif %}
+            </div>
+            <h4>Total</h4>
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Objets</th>
+                        {% if user.is_superuser %}
+                            <th>Prix liste</th>
+                            <th>Cost&nbsp;($CA)</th>
+                        {% endif %}
+                        <th>Prix vente&nbsp;($CA)</th>
+                        {% if user.is_superuser %}
+                            <th>Profit&nbsp;($CA)</th>
+                            <th>B.B</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for objet in total.liste %}
+                        <tr>
+                            <td>{{ objet.numero }}</td>
+                            {% if user.is_superuser %}
+                                <td style="text-align: right;">{{ objet.prix_fournisseur|floatformat:2|intcomma }}&nbsp;{{ objet.fournisseur.devise.symbole }}</td>
+                                <td style="text-align: right;">{{ objet.cost|floatformat:2|intcomma }}&nbsp;$</td>
+                            {% endif %}
+                            <td style="text-align: right;">{{ objet.plMin|floatformat:2|intcomma }}&nbsp;$</td>
+                            {% if user.is_superuser %}
+                                <td style="text-align: right;">{{ objet.profit|floatformat:2|intcomma }}&nbsp;$</td>
+                                <td style="text-align: right;">{{ objet.profit_pourcent|floatformat:2|intcomma }}&nbsp;%</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray">Total:</th>
+                        {% if user.is_superuser %}
+                            <th style="text-align: right;background-color: lightgray"></th>
+                            <th style="text-align: right;background-color: lightgray">{{ total.cost|floatformat:2|intcomma }}&nbsp;$</th>
+                        {% endif %}
+                        <th style="text-align: right;background-color: lightgray">{{ total.plMin|floatformat:2|intcomma }}&nbsp;$</th>
+                        {% if user.is_superuser %}
+                            <th style="text-align: right;background-color: lightgray">{{ total.profit|floatformat:2|intcomma }}&nbsp;$</th>
+                            <th style="text-align: right;background-color: lightgray">{{ total.profit_pourcent|floatformat:2|intcomma }}&nbsp;%</th>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

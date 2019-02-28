@@ -1,0 +1,133 @@
+﻿{% extends "base.html" %}
+{% block title %}Formulaire d'approbation{% endblock title %}
+{% block extrahead %}
+    <style media="screen" type="text/css">
+        textarea {
+            height: 40px;
+            resize:none;
+            width: 90%
+        }
+
+    </style>
+{% endblock extrahead %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset2 well">
+            <div class="pull-left">
+                <h4>EuGénie Canada Inc.</h4>
+                <h4>Approbation des blocs de temps</h4>
+            </div>
+            <div class="pull-right text-right">
+                <img width="200" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+            </div>
+            {% if formset.0.instance %}
+                <div>
+                    <form id="blocForm" class="form-inline" method="post" autocomplete="off" action="">{% csrf_token %}
+                        <table id="table1" class="table table-bordered table-condensed">
+                            <thead>
+                                <th>Employé</th>
+                                <th>Semaine</th>
+                                <th>Date</th>
+                                <th>Projet</th>
+                                <th>Tâche</th>
+                                <th>Temps</th>
+                                <th>Notes</th>
+                                <th>Approuvé</th>
+                            </thead>
+                            <tbody>
+                                {% for form in formset %}
+                                    {{ form.id }}
+                                    <tr>
+                                        <td>
+                                            {% if form.employe.errors %}
+                                                {{ form.employe.errors }}
+                                            {% endif %}
+                                            {{ form.instance.employe }}
+                                            {{ form.employe.as_hidden }}
+                                        </td>
+                                        <td>
+                                            {{ form.instance.date|date:"W, o" }}
+                                        </td>
+                                        <td>
+                                            {% if form.date.errors %}
+                                                {{ form.date.errors }}
+                                            {% endif %}
+                                            {{ form.instance.date|date:"d F Y" }}
+                                            {{ form.date.as_hidden }}
+                                        </td>
+                                        <td>
+                                            {% if form.projet.errors %}
+                                                {{ form.projet.errors }}
+                                            {% endif %}
+                                            {{ form.instance.projet }}
+                                            {{ form.projet.as_hidden }}
+                                        </td>
+                                        <td>
+                                            {% if form.tache.errors %}
+                                                {{ form.tache.errors }}
+                                            {% endif %}
+                                            {{ form.instance.tache }}
+                                            {{ form.tache.as_hidden }}
+                                        </td>
+                                        <td style="text-align: center">
+                                            {% if form.temps.errors %}
+                                                {{ form.temps.errors }}
+                                            {% endif %}
+                                            {{ form.instance.temps }} H
+                                            {% if form.instance.banque %}
+                                                <br />[Banque]
+                                            {% endif %}
+                                            {{ form.temps.as_hidden }}
+                                            {{ form.banque.as_hidden }}
+                                        </td>
+                                        <td>
+                                            {% if form.note.errors %}
+                                                {{ form.note.errors }}
+                                            {% elif form.errors %}
+                                                <ul class='errorlist'><li>&nbsp</li></ul>
+                                            {% endif %}
+                                            {{ form.note }}
+                                        </td>
+                                        <td>
+                                            {% if form.approuve.errors %}
+                                                {{ form.approuve.errors }}
+                                            {% endif %}
+                                            {{ form.approuve }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {{ formset.management_form }}
+                            </tbody>
+                        </table>
+                        <p><input class="btn btn-primary" type="submit" value="Sauvegarder" /></p>
+                    </form>
+                    <script type="text/javascript" language="javascript" src="{{STATIC_URL}}TableFilter/tablefilter.js"></script>
+                    <script language="javascript" type="text/javascript">
+                        var tf_table1  = {
+                            col_0: "select",
+                            col_1: "select",
+                            col_2: "multiple",
+                            col_3: "select",
+                            col_4: "select",
+                            col_5: "none",
+                            col_7: "none",
+                            btn_reset: true,
+                            paging: true,
+                            paging_length: 25 ,
+                            results_per_page: ['Blocs par page',[25,50,100]],
+                            display_all_text: "Tout Afficher",
+                            rows_counter: true,
+                            rows_counter_text: "Blocs: ",
+                            popup_filters: true
+                        };
+                        setFilterGrid("table1",1,tf_table1);
+                    </script>
+                </div>
+            {% else %}
+                <br /><br /><br /><br />
+                <h3 class="text-success">Vous n'avez aucun bloc de temps à approuver</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

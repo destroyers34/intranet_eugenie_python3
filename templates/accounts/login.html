@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <img class="img-responsive center-block" src="{{ STATIC_URL }}img/main.png">
+        </div>
+    </div>
+    <div class="row top-buffer row-centered">
+        <div class="col-md-3 col-xs-12 col-centered">
+            <div class="jumbotron">
+                {% if form.errors %}
+                    <div class="form-signin">
+                    <h1 class="text-error">Erreur d'authentification</h1>
+                    {% if form.username.errors %}
+                        <p class="text-error">Vous devez entrer un nom d'utilisateur</p>
+                    {% endif %}
+                    {% if form.password.errors %}
+                        <p class="text-error">Votre mot de passe est incorrect</p>
+                    {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

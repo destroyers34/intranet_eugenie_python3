@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Modification depense ECI{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+{% endblock extrahead %}
+{% block nav-cdd %}<li class="dropdown active">{% endblock nav-cdd %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Ajout/Modification d'une dépense</h3>
+        </div>
+    </div>
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <form id="blocForm" enctype="multipart/form-data" class="form-inline" method="post" autocomplete="off" action="">{% csrf_token %}{{ form.id }}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12 ">{{ form.date.errors }}</div>
+                                <div class="col-md-12">Date:
+                                    <input class='date' type="text" name="{{ form.date.html_name }}" id="id_{{ form.date.html_name }}" {% if form.date.value %}value='{{ form.date.value|date:"Y-m-d" }}'{% endif %}/>
+                                </div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.detail.errors }}</div>
+                                <div class="col-md-12 ">Détails: {{ form.detail }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.projet.errors }}</div>
+                                <div class="col-md-12 ">Projet: {{ form.projet }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.gl.errors }}</div>
+                                <div class="col-md-12 ">GL: {{ form.gl }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.tps.errors }}</div>
+                                <div class="col-md-12 ">HST/TPS: {{ form.tps }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.tvq.errors }}</div>
+                                <div class="col-md-12 ">TVQ: {{ form.tvq }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12 ">{{ form.montant.errors }}</div>
+                                <div class="col-md-12 ">Montant: {{ form.montant }}</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">{{ form.photo.errors }}</div>
+                                <div class="col-md-12 ">Facture: {{ form.photo }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-2">
+                            {{ management_form }}
+                            <input class="btn btn-primary" type="submit" value="Sauvegarder" />
+                            <a class="btn btn-primary" href="{% url 'depense_eci_list' %}">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+{% endblock %}
+{% block jquery %}
+        $('.date').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+{% endblock jquery %}

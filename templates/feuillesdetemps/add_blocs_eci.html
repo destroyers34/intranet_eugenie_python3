@@ -1,0 +1,84 @@
+﻿{% extends "base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+{% endblock extrahead %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Formulaire d'ajout de blocs de temps</h3>
+        </div>
+    </div>
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <form id="blocForm" class="form-inline" method="post" autocomplete="off" action="">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-2">
+                            <p>Employé {% if user.is_superuser %}(<a href="{% url 'admin:auth_user_add' %}">+</a>){% endif %}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Date</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p>Projet {% if perms.projets.add_projet_eci %}(<a target='_blank' href="{% url 'admin:projets_projet_eugenie_add' %}">+</a>){% endif %}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Tache</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>Temps</p>
+                        </div>
+                    </div>
+                    {% for form in formset %}
+                        <div class="row form-row-2">
+                            <div class="col-md-11">
+                            {% if form.errors %}
+                                <div class="row">
+                                    <div class="col-md-2 top-buffer">{{ form.employe.errors }}</div>
+                                    <div class="col-md-2 top-buffer">{{ form.date.errors }}</div>
+                                    <div class="col-md-3 top-buffer">{{ form.projet.errors }}</div>
+                                    <div class="col-md-3 top-buffer">{{ form.tache.errors }}</div>
+                                    <div class="col-md-1 top-buffer">{{ form.temps.errors }}</div>
+                                </div>
+                            {% endif %}
+                                <div class="row">
+                                    <div class="col-md-2 top-buffer">{{ form.id }}{{ form.employe }}</div>
+                                    <div class="col-md-2 top-buffer">
+                                         <input class='date' type="text" name="{{ form.date.html_name }}" id="id_{{ form.date.html_name }}" {% if form.date.value %}value='{{ form.date.value }}'{% endif %}/>
+                                    </div>
+                                    <div class="col-md-3 top-buffer">{{ form.projet }}</div>
+                                    <div class="col-md-3 top-buffer">{{ form.tache }}</div>
+                                    <div class="col-md-1 top-buffer">
+                                        <div class="center-block">
+                                            {{ form.temps }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="row">
+                        <div class="col-md-2">
+                            {{ formset.management_form }}
+                            <input class="btn btn-primary" type="submit" value="Sauvegarder" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery.formset.js"></script>
+{% endblock %}
+{% block jquery %}
+        $('.form-row-2').formset({prefix: '{{ formset.prefix }}',added: function(row) {row.find(".date").datepicker({format: 'yyyy-mm-dd', autoclose: true});}, load: function(row) {row.find(".date").datepicker({format: 'yyyy-mm-dd', autoclose: true});}});
+        $('.date').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+{% endblock jquery %}

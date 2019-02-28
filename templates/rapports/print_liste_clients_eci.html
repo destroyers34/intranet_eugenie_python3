@@ -1,0 +1,31 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h4>EuGénie Canada Inc.</h4>
+		<h4>Liste des projets par client</h4>
+		<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Clients</th>
+				<th>Numéros</th>
+				<th>Noms</th>
+				<th>Modèles</th>	
+			</tr>
+		</thead>
+		<tbody>
+		{% for clients in liste_clients %}
+			<tr>
+			<td rowspan='{{clients.liste_projets|length}}'>{{clients.nom}}</td>
+			{% for projets in clients.liste_projets %}
+				<td>{{ projets.numero }}</td>
+				<td>{{ projets.nom }}</td>
+				<td>{{ projets.modele }}</td>
+				
+				</tr>
+				<tr>
+			{% endfor %}
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+{% endblock %}

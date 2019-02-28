@@ -1,0 +1,30 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h4>Techno-Pro Experts Inc.</h4>
+		<h4>Liste des projets</h4>
+		<h3>{{ client.nom }}</h3>
+		<h3></h3>
+		<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Numéros</th>
+				<th>Noms</th>
+				<th>Budget MAT</th>
+				<th>Budget MO</th>
+				<th>Temps (H)</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for p in liste_projets %}
+			<tr>
+				<td>{{ p.projet.numero }}</td>
+				<td>{{ p.projet.nom }}</td>
+				<td>{{ p.projet.budget_mat }}</td>
+				<td>{{ p.projet.budget_mo }}</td>
+				<td>{{ p.heures.total }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+		</table>
+{% endblock %}

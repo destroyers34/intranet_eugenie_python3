@@ -1,0 +1,70 @@
+{% load url from future %}
+{% block title %}{% endblock title %}
+{% block nav %}{% endblock nav %}
+{% block content %}
+    <img style="float: right" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+    <h3>EuGénie Canada Inc.</h3>
+    <h3>Compte de {{ depense_eci_list.0.employe }} {{ date1|date:"Y-m-d" }} au {{ date2|date:"Y-m-d" }}</h3>
+    <table border="1" cellpadding="2">
+        <thead>
+            <tr>
+                <th >Facture</th>
+                <th >Date</th>
+                <th >Detail</th>
+                <th >Projet</th>
+                <th >GL</th>
+                <th >TPS</th>
+                <th >TVQ</th>
+                <th >Montant</th>
+                <th >Total</th>
+                <th >Approuve par:</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for depense in depense_eci_list %}
+                <tr>
+                    <td>ECI_{{ depense.id }}</td>
+                    <td>{{ depense.date|date:"d/m/Y" }}</td>
+                    <td>{{ depense.detail}} </td>
+                    <td>{{ depense.projet.numero }}</td>
+                    <td>{{ depense.gl.numero }}</td>
+                    <td>{{ depense.tps|default_if_none:"0.00" }} $</td>
+                    <td>{{ depense.tvq|default_if_none:"0.00" }} $</td>
+                    <td>{{ depense.montant|default_if_none:"0.00" }} $</td>
+                    <td>{{ depense.fac_total|default_if_none:"0.00" }} $</td>
+                    <td>{% if depense.approved_by %}
+                            {{ depense.approved_by }} le {{ depense.approved_on|date:"d/m/Y" }}
+                        {% else %}
+                            <i class="glyphicon glyphicon-remove"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table border="1" cellpadding="2">
+        <tr>
+            <th>GL</th>
+            <th>Montant</th>
+        </tr>
+        {% for totaux in subtotal %}
+        <tr>
+            <td>{{ totaux.gl__numero }}: {{ totaux.gl__description }}</td>
+            <td>{{ totaux.subtotal|default_if_none:"0.00" }} $</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>21403: TPS/TVH</td>
+            <td>{{ total.t_tps|default_if_none:"0.00" }} $</td>
+        </tr>
+        <tr>
+            <td>21407: TVQ</td>
+            <td>{{ total.t_tvq|default_if_none:"0.00" }} $</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <th>{{ total.total|default_if_none:"0.00" }} $</th>
+        </tr>
+    </table>
+{% endblock %}

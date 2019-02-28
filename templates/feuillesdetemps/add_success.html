@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Succès{% endblock title %}
+{% block content %}
+<div class="row-fluid">
+	<div class="span4 offset4">
+        <div class="text-center">
+            <img src="{{ STATIC_URL }}img/main.png" /><br /><br />
+        </div>
+        <div class="well text-center">
+            <h2 class="text-success text-center">Blocs ajouté avec succès!</h2>
+            <a class="btn btn-primary" href="../">Retour au formulaire</a>
+	    </div>
+    </div>
+</div>
+{% endblock %}

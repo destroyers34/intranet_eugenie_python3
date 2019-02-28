@@ -1,0 +1,47 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h3>Techno-Pro Experts Inc.</h3>
+		<h4>Rapport de temps de chacun des projets actif</h3>
+		<h4>{{date}}</h3>
+			  {% if projets_actif|length > 0 %}
+			  <table class="table table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th>Numéro</th>
+						<th>Nom</th>
+						<th>Client</th>
+						<th class='center-text'>Budget (H)</th>
+						<th class='center-text'>Temps (H)</th>
+						<th class='center-text'>% MO</th>
+						<th class='center-text'>Restant (J)</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan='2'></td>
+						<th>Total:</th>
+						<th class='center-text'>{{total_actif.total_mo}}</th>
+						<th class='center-text'>{{total_actif.total_heure}}</th>
+						<th class='center-text'>{{total_actif.total_pourcent}} %</th>
+						<th></th>
+					</tr>
+					</tfoot>
+				<tbody>
+			{% for projet in projets_actif %}
+				<tr>
+				<td>{{projet.numero}}</td>
+				<td>{{projet.nom}}</td>
+				<td>{{projet.client.nom}}</td>
+				<td class='center-text'>{{projet.budget_mo}}</td>
+				<td class='center-text'>{{projet.heure}}</td>
+				<td class='center-text'>{{projet.pourcent}} %</td>
+				<td class='center-text'>{{projet.jours_restant}}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+			</table>
+			{% else %}
+			<p>Il n'y a aucun projets actif</p>
+			{% endif %}
+{% endblock %}

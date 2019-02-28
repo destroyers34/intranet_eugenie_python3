@@ -1,0 +1,49 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h4>EuGénie Canada Inc.</h4>
+		<h4>Liste des modèles</h4>
+		<h3>{{ nom_projet }}</h3>
+		<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Modèle</th>
+				<th>Projets</th>
+				<th>Temps</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td></td><th>Total:</th><th>{{modeles_total.heures}}</th>
+			</tr>
+		</tfoot>
+		<tbody>
+		{% for modele in modeles %}
+			{% if modele.liste_projets %}
+			<tr>
+				<td rowspan='{{ modele.liste_projets|length }}'>{{modele.modele}}</td>
+			{% for projet in modele.liste_projets %}
+				<td>{{ projet.numero }}</td>
+				<td>{{ projet.heure }}</td>
+			</tr>
+			<tr>
+			{% endfor %}
+				<td></td>
+				<th>Moyenne {{modele.modele}} :</th>
+				<th>{{ modele.moyenne }}</th>
+			</tr>
+			<tr>
+				<td></td>
+				<th>Total {{modele.modele}} :</th>
+				<th>{{ modele.heure }}</th>
+			{% else %}
+				<tr>
+					<td>{{modele.modele}}</td>
+					<td>Aucun</td>
+					<td>0</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+		</tbody>
+		</table>
+{% endblock %}

@@ -1,0 +1,68 @@
+﻿{% load humanize %}
+<h4>EuGénie Canada Inc.</h4>
+<h4>Rapport de temps des tâches du projet</h4>
+<h3>{{ numero_projet }}</h3>
+<table>
+	<thead>
+    <tr>
+        <th>Tâche</th>
+        <th>Temps (H)</th>
+        <th>Main d'oeuvre</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for bloc in blocs %}
+        {% if forloop.last %}
+            <tr>
+                <th>Total MO:</th>
+                <th>{{ bloc.H }} H</th>
+                <th>{{ bloc.MO|default_if_none:"0,00"|floatformat:2|intcomma }}</th>
+            </tr>
+            <tr>
+                <th>Fournisseur</th>
+                <th>Catégorie</th>
+                <th>Montant</th>
+            </tr>
+            {% if materiels %}
+                {% for materiel in materiels %}
+                    <tr>
+                        <td>{{ materiel.fournisseur }}</td>
+                        <td>{{ materiel.categorie }}</td>
+                        <td>{{ materiel.montant|default_if_none:"0,00"|floatformat:2|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>Aucun matériel pour ce projet</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endif %}
+            <tfoot>
+            <tr>
+                <td></td>
+                <th>Total matériel:</th>
+                <th>{{ materiel_total.total|default_if_none:"0,00"|floatformat:2|intcomma }} $</th>
+            </tr>
+            <tr>
+                <td></td>
+                <th>Total MO:</th>
+                <th>{{ bloc.MO|default_if_none:"0,00"|floatformat:2|intcomma }}</th>
+            </tr>
+            <tr>
+                <td></td>
+                <th>Total:</th>
+                <th>{{ total|default_if_none:"0,00"|floatformat:2|intcomma }}</th>
+            </tr>
+            </tfoot>
+        {% else %}
+            <tr>
+                <td>{{ bloc.tache }}</td>
+                <td>{{ bloc.H }}</td>
+                <td>{{ bloc.MO|floatformat:2|intcomma }}</td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>

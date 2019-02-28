@@ -1,0 +1,18 @@
+﻿{% extends "base.html" %}
+{% block title %}GPAO{% endblock title %}
+{% block nav-gpao %}<li class="dropdown active">{% endblock nav-gpao %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span4 offset4">
+            <div class="well">
+                <h4>GPAO</h4>
+                <ul>
+                    <a href="{% url 'liste_nm' %}"><li>RÉFÉRENCEMENT DES NOMENCLATURES</li></a>
+                    <a href="{% url 'liste_pe' %}"><li>RÉFÉRENCEMENT DES PLANS D'ENSEMBLES</li></a>
+                    <a href="{% url 'liste_famille' %}"><li>LISTE DES FAMILLES DE PIÈCE</li></a>
+                    <a href="{% url 'liste_piece' %}"><li>LISTE DES PIÈCES</li></a>
+                </ul>
+	        </div>
+        </div>
+    </div>
+{% endblock %}

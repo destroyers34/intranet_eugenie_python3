@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+{% load admin_urls %}
+{% load humanize %}
+{% block title %}GPAO{% endblock title %}
+{% block nav-gpao %}<li class="dropdown active">{% endblock nav-gpao %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset2">
+            <div class="well">
+                <div class="row-fluid">
+                    <div class="pull-left">
+                        <h4>GPAO</h4>
+                        <h4>{{nm.reference}} {{nm.designation}}</h4>
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-primary" href="{% url 'admin:gpao_nm_change' nm.id %}">Modifier la NM</a>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <h5>Plan d'ensemble lié: <a href="{{ nm.pe.plan.url }}">{{nm.pe}}</a></h5>
+                    <h5 class="text-center">NMs et Pièces liés</h5>
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>N° sur PE</th>
+                                <th>Référence</th>
+                                <th>Désignation</th>
+                                <th>Qt.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lien in nm.get_liensnm %}
+                                <tr>
+                                    <td>{{lien.numero_pe}}</td>
+                                    <td><a href="{% url 'details_nm' lien.to_nm.reference %}">{{lien.to_nm.reference}}</a></td>
+                                    <td>{{lien.to_nm.designation}}</td>
+                                    <td>{{lien.quantite}}</td>
+                                </tr>
+                            {% endfor %}
+                            {% for piece in nm.get_lienspiece %}
+                                <tr>
+                                    <td>{{piece.numero_pe}}</td>
+                                    <td><a href="{% url 'details_piece' piece.to_piece.reference %}">{{piece.to_piece.reference}}</a></td>
+                                    <td>{{piece.to_piece.designation}}</td>
+                                    <td>{{piece.quantite}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row-fluid">
+                    <div class="pull-right">
+                        <a target='_blank' class='btn btn-primary' href="{% url 'soumission' nm.reference %}">Faire une soumission</a>
+                    </div>
+                    <h5 class="text-center">NMs et Pièces liés</h5>
+                    <table class="table table-striped table-bordered table-condensed">
+                        <tr>
+                            <th>Pièces</th>
+                            <th>Fournisseur</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Prix</th>
+                        </tr>
+                        {% for pieces in nm.get_pieces %}
+                            <tr>
+                                <td>{{ pieces.piece }}</td>
+                                <td>{{ pieces.fournisseur }}</td>
+                                <td>{{ pieces.piece.prix }}&nbsp;$</td>
+                                <td>{{ pieces.qt }}</td>
+                                <td style="text-align: right;">{{ pieces.prix }}&nbsp;$</td>
+                            </tr>
+                            {% if forloop.last %}
+                                <tr>
+                                    <th style="text-align: right;background-color: lightgray" colspan="3"></th>
+                                    <th style="text-align: right;background-color: lightgray">Total:</th>
+                                    <td style="text-align: right;background-color: lightgray">{{pieces.total}}&nbsp;$</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

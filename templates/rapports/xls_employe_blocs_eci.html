@@ -1,0 +1,32 @@
+﻿
+	<h4>EuGénie Canada Inc.</h4>
+	<h4>Rapport de temps {% if date_debut != null %}du {{date_debut}} au {{date_fin}}{% endif %}</h4>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Employé</th>
+					<th>Projet</th>
+					<th>Tâche</th>
+					<th>Temps (H)</th>
+				</tr>
+			</thead>
+			
+			<tbody>
+		{% for bloc in blocs %}
+			<tr>
+			<td>{{bloc.date}}</td>
+			<td>{{bloc.employe.user.first_name}} {{bloc.employe.user.last_name}}</td>
+			<td>{{bloc.projet.numero}} {{bloc.projet.nom}} {{bloc.projet.modele}}</td>
+			<td>{{bloc.tache.numero}} {{bloc.tache.description}}</td>
+			<td>{{bloc.temps}}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		<tfoot>
+				<tr>
+					<td colspan='3'></td><th>Total:</th><th>{{total_bloc.heures}}</th>
+				</tr>
+			</tfoot>
+		</table>
+

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+{% block title %}Depenses{% endblock title %}
+{% block nav-liste %}<li class="dropdown active">{% endblock nav-liste %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3">
+            <div class="well">
+                <h3>Comptes de depense</h3>
+                <table id="table1" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center">Employe</th>
+                            <th style="text-align: center">Periode</th>
+                            <th style="text-align: center">Kilometrage</th>
+                            <th style="text-align: center">Approuve</th>
+                            <th style="text-align: center">Avantage</th>
+                            <th style="text-align: center">Paye</th>
+                            <th style="text-align: center">Factures</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for depense in depense_list %}
+                            <tr>
+                                <td style="text-align: center">{{ depense.employe }}</td>
+                                <td style="text-align: center">{{ depense.date_debut }}-{{ depense.date_fin }}</td>
+                                <td style="text-align: center">{{depense.kilometrage|default_if_none:"-"}} KM</td>
+                                <td style="text-align: center">{% if depense.approuve %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
+                                <td style="text-align: center">{% if depense.avantage %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
+                                <td style="text-align: center">{% if depense.paye %}{% else %}<i class="icon-remove"></i>{% endif %}</td>
+                                <td style="text-align: center"><a class="btn btn-primary" href="{% url 'depense-edit' pk=depense.id %}"><i class="icon-pencil icon-white"></i></a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            <a class="btn btn-primary" href="{% url 'depense-new' %}">Nouveau compte de depense</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

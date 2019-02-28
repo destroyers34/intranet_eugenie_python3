@@ -1,0 +1,72 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block extrahead %}
+<style type="text/css">
+	table {
+		background-color: transparent;
+	}
+	td {
+		font-size: 10px;
+	}
+	td img {
+		float: left;
+		height: 15px
+	}
+</style>
+{% endblock extrahead %}
+{% block content %}
+		<h4>EuGénie Canada Inc. - Rapport des projets actifs - {% now "DATE_FORMAT"%}</h4>
+		<table>
+		<tr>
+			<th style="width: 125px; vertical-align: bottom;">Projet</th>
+			<th style="width: 120px; vertical-align: bottom;">Clients</th>
+			<th style="width: 80px; vertical-align: bottom;">Date Fin</th>
+			<th style="width: 70px; vertical-align: bottom;">Durée (J)</th>
+			<th style="width: 500px; vertical-align: bottom;">
+				<table>
+				<tr>
+					<td style="text-align: left; width: 250px;">{{ start }}</td>
+					<td style="text-align: right;width: 250px;">{{ end }}</td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr >
+			<td colspan='4'></td>
+			<td>
+				<img src="{{STATIC_URL}}images/shim.gif" height="15px;" width="{{ jour_delay_pix }}px;">
+				<img src="{{STATIC_URL}}images/arrow.gif" height="15px;">
+			</td>
+		</tr>
+		{% for projet in projets %}
+		<tr>
+			<td>{{ projet.numero }} {{ projet.nom }} {{ projet.modele }}</td>
+			<td>{{ projet.client|truncatewords_html:2 }}</td>
+			<td class='center-text'>{{ projet.date_fin|date:"d M Y" }}</td>
+			<td class='center-text'>{{ projet.nbjours }}</td>
+			
+			<td style="border: solid 1px grey;">
+			{% if projet.nbjours != 0 %}
+				{% if projet.early %}
+					<img src="{{STATIC_URL}}images/blue-line.gif" height="15px;" width="{{ projet.nbjours_pix }}px;">
+					{% if projet.late %}
+					{% else %}
+					<img src="{{STATIC_URL}}images/bluebar.gif" height="15px;" width="2px;">
+					{% endif %}
+				{% else %}
+					<img src="{{STATIC_URL}}images/shim.gif" height="15px;" width="{{ projet.delay_pix }}px;">
+					<img src="{{STATIC_URL}}images/bluebar.gif" height="15px;" width="2px;">
+					{% if projet.late %}
+						<img src="{{STATIC_URL}}images/blue-line.gif" height="15px;" width="{{ projet.nbjours_pix }}px;">
+					{% else %}
+						<img src="{{STATIC_URL}}images/blue-line.gif" height="15px;" width="{{ projet.nbjours_pix }}px;">
+						<img src="{{STATIC_URL}}images/bluebar.gif" height="15px;" width="2px;">
+					{% endif %}
+				{% endif %}
+			{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+		</table>
+{% endblock content %}

@@ -1,0 +1,61 @@
+﻿{% extends "base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block extrahead %}
+<link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.formset.js"></script>
+{% endblock extrahead %}
+{% block jquery %}
+$('#blocForm tbody tr').formset({prefix: '{{ formset.prefix }}',added: function(row) {row.find(".date").datepicker({format: 'yyyy-mm-dd', autoclose: true});}, load: function(row) {row.find(".date").datepicker({format: 'yyyy-mm-dd', autoclose: true});}});
+$('.date').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+{% endblock jquery %}
+{% block nav-feuille %}<li class="dropdown active">{% endblock nav-feuille %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3">
+            <div class="well">
+                <div class="pull-left">
+                    <br />
+                    <h4>Groupe EuGénie Inc.</h4>
+                    <h4>Formulaire d'ajout de temps dans la banque d'heure</h4>
+                    <br />
+                </div>
+                <div class="pull-right text-right">
+                    <img width="200" src="{{ STATIC_URL }}img/main.png"><br /><br />
+                </div>
+                <form id="blocForm" class="form-inline" method="post" autocomplete="off" action="">{% csrf_token %}
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>Employé</th>
+                            <th>Date</th>
+                            <th>Temps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for form in formset %}
+                        {{ form.id }}
+                        {% if form.errors %}
+                            <tr>
+                                <td>{{ form.employe.errors }}</td>
+                                <td>{{ form.date.errors }}</td>
+                                <td>{{ form.temps.errors }}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td>{{ form.employe }}</td>
+                            <td><input class='date' type="text" name="{{ form.date.html_name }}" id="id_{{ form.date.html_name }}" /></td>
+                            <td>{{ form.temps }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                    {{ formset.management_form }}
+                    <br />
+                    <p><input class="btn" type="submit" value="Sauvegarder" /></p>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

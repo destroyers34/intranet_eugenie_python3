@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>GEI | {% block title %}{% endblock title %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{STATIC_URL}}favicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="http://getbootstrap.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{STATIC_URL}}css/extra.css" rel="stylesheet" >
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="http://getbootstrap.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    {% block extrahead %}
+    {% endblock extrahead %}
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+{% block nav %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><img width="20px" height="20px" src="{{ STATIC_URL }}gei.png"></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    {% if perms.feuilles_de_temps.add_bloc_eugenie or perms.feuilles_de_temps.add_bloc_tpe or perms.feuilles_de_temps.add_bloc_jrc or perms.feuilles_de_temps.add_banque %}
+                        {% block nav-feuille %}<li class="dropdown">{% endblock nav-feuille  %}
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="false">Feuilles de temps <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-header">ECI</li>
+                                {% if perms.feuilles_de_temps.add_bloc_eugenie %}
+                                    <li><a href="{% url 'blocs_eci'%}">Derniers blocs ECI</a></li>
+                                    <li><a href="{% url 'add_blocs_eci'%}">Ajouter des blocs de temps</a></li>
+                                {% endif %}
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">TPE</li>
+                                {% if perms.feuilles_de_temps.add_bloc_tpe %}
+                                    <li><a href="{% url 'blocs_tpe'%}">Derniers blocs TPE</a></li>
+                                    <li><a href="{% url 'add_blocs_tpe'%}">Ajouter des blocs de temps</a></li>
+                                {% endif %}
+                                <!--
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">JRC</li>
+                                {% if perms.feuilles_de_temps.add_bloc_jrc %}
+                                    <li><a href="">Ajouter des blocs de temps</a></li>
+                                {% endif %}
+                                -->
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if perms.feuilles_de_temps.afficher_rapport_temps_eugenie or perms.feuilles_de_temps.afficher_rapport_temps_tpe or perms.feuilles_de_temps.afficher_rapport_temps_jrc %}
+                        {% block nav-rapport %}<li class="dropdown">{% endblock nav-rapport  %}
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="false">Rapports <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                {% if perms.feuilles_de_temps.afficher_rapport_temps_eugenie %}
+                                    <li class="dropdown-header">ECI</li>
+                                    <li><a href="{% url 'liste_projets_eci' %}">Projets</a></li>
+                                    <li><a href="{% url 'liste_taches_eci' %}">Tâches</a></li>
+                                    <li><a href="{% url 'liste_employes_eci' %}">Employés</a></li>
+                                    <li><a href="{% url 'liste_clients_eci' %}">Clients</a></li>
+                                    <li><a href="{% url 'liste_machines_eci' %}">Machines</a></li>
+                                    <li><a href="{% url 'view_fournisseurs_materiels' %}">Matériels</a></li>
+                                {% endif %}
+                                {% if perms.feuilles_de_temps.afficher_rapport_temps_tpe %}
+                                    <li role="separator" class="divider"></li>
+                                    <li class="dropdown-header">TPE</li>
+                                    <li><a href="{% url 'liste_projets_tpe' %}">Projets</a></li>
+                                    <li><a href="{% url 'liste_taches_tpe' %}">Tâches</a></li>
+                                    <li><a href="{% url 'liste_employes_tpe' %}">Employés</a></li>
+                                    <li><a href="{% url 'liste_clients_tpe' %}">Clients</a></li>
+                                {% endif %}
+                                <!--
+                                {% if perms.feuilles_de_temps.afficher_rapport_temps_jrc %}
+                                    <li role="separator" class="divider"></li>
+                                    <li class="dropdown-header">JRC</li>
+                                    <li><a href="#">Projets</a></li>
+                                    <li><a href="#">Tâches</a></li>
+                                    <li><a href="#">Employés</a></li>
+                                    <li><a href="#">Clients</a></li>
+                                {% endif %} -->
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if perms.listes_de_prix.afficher_listes_prix %}
+                        {% block nav-liste %}<li class="dropdown">{% endblock nav-liste  %}
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="false">Listes de prix <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'liste_fournisseurs' %}">Fournisseurs</a></li>
+                            </ul>
+                        </li>
+				    {% endif %}
+                    {% if perms.comptes.creer_cdd_eci %}
+                    {% block nav-cdd %}<li class="dropdown">{% endblock nav-cdd  %}
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="false">CDD <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'depense_eci_list' %}">CDD ECI</a></li>
+                            {% if perms.comptes.admin_cdd_eci %}
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">Admin</li>
+                                <li><a href="{% url 'depense_eci_approve' %}">Approbation</a></li>
+                                <li><a href="{% url 'rapport_depense_eci_select' %}">Rapports</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                        {% block nav-gpao %}<li>{% endblock nav-gpao %}
+                            <a href="{% url 'main_gpao' %}">GPAO</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                {% if user.is_authenticated %}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="navbar-right dropdown">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="false">{% filter force_escape %}{% firstof user.first_name user.username user.get_short_name user.get_username %}{% endfilter %} <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                {% if user.is_staff %}
+                                    <li><a href="/admin">Administration</a></li>
+                                {% endif %}
+                                <li><a href="/accounts/password_change">Changer le mot de passe</a></li>
+                                <li><a href="/accounts/logout">Déconnecter</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                {% else %}
+                    <form class="navbar-form navbar-right" name="login" action="{% url 'django.contrib.auth.views.login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input id="id_username" maxlength="254" name="username" type="text" placeholder="Nom d'utilisateur" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input id="id_password" name="password" type="password" placeholder="Mot de passe" class="form-control">
+                        </div>
+                        <button type="submit" class="btn">Connexion</button>
+                        <input type="hidden" name="next" value="/" />
+                    </form>
+                {% endif %}
+            </div><!--/.navbar-collapse -->
+        </div> <!-- /container -->
+    </nav>
+{% endblock nav %}
+
+<div class="container-fluid">
+    <div id="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{message.tags}}">
+            <a class="close" data-dismiss="alert">×</a>
+            {{message}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="wrapper">
+        {% block content %}{% endblock content %}
+        <div class="push"></div>
+    </div>
+    <div class="row top-buffer"></div>
+</div> <!-- /container -->
+
+<div class="navbar-inverse container-fluid">
+    <div class="footer">
+        <div class="row top-buffer">
+            <div class="col-md-12 text-center">
+                <img class="img-responsive center-block" src="{{ STATIC_URL }}img/groupeEugenie-logof_groupe.png" alt="Eugénie Canada">
+            </div>
+        </div>
+        <hr>
+        <div class="row top-buffer">
+            <div class="col-xs-12 col-md-3 text-center top-buffer">
+                <img class="img-responsive center-block" src="{{ STATIC_URL }}img/groupeEugenie-logof_eugenie.png" alt="Eugénie Canada">
+            </div>
+            <div class="col-xs-12 col-md-3 text-center top-buffer">
+                <img class="img-responsive center-block" src="{{ STATIC_URL }}img/groupeEugenie-logof_jrc.png" alt="Eugénie Canada">
+            </div>
+            <div class="col-xs-12 col-md-3 text-center top-buffer">
+                <img class="img-responsive center-block" src="{{ STATIC_URL }}img/groupeEugenie-logof_techno.png" alt="Eugénie Canada">
+            </div>
+            <div class="col-xs-12 col-md-3 text-center top-buffer">
+                <img class="img-responsive center-block" src="{{ STATIC_URL }}img/groupeEugenie-logof_engrenage.png" alt="Eugénie Canada">
+            </div>
+        </div>
+        <div class="row top-buffer"></div>
+    </div>
+</div>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+{% block extrajquery %}
+
+{% endblock %}
+<script type="text/javascript">
+        $(document).ready(function(){$('.dropdown-toggle').dropdown()});
+        $(document).ready(function(){
+        {% block jquery %}
+        {% endblock %}
+        });
+</script>
+<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>

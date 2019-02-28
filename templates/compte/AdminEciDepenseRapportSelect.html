@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+{% endblock extrahead %}
+{% block nav-cdd %}<li class="dropdown active">{% endblock nav-cdd %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <img class="img-responsive center-block" src="{{ STATIC_URL }}img/logo_eugenie.png">
+        </div>
+    </div>
+     <div class="row top-buffer row-centered">
+        <div class="col-md-5 col-xs-12 col-centered">
+            <div class="jumbotron">
+                <form class="form-inline" action="" method="post">{% csrf_token %}
+                    <h3>Choisir le rapport:</h3>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="top-buffer" for="id_date">Date debut:</label>
+                            <input class="id_date" id="id_date" name="date" type="text">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top-buffer" for="id_date_fin">Date fin:</label>
+                            <input class="id_date_fin top-buffer" id="id_date_fin" name="date_fin" type="text">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="top-buffer" for="id_employe">Employe</label>
+                            {{ form.employe }}
+                        </div>
+                        <div class="col-md-12">
+                            <input class="btn btn-primary" type="submit" value="Voir" />
+                        </div>
+                    </div>
+                    {% if form.errors %}
+                        <h5 class="text-error">Vous n'avez pas remplie les champs correctement</h5>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+     </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+{% endblock %}
+{% block jquery %}
+    $('.id_date').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $('.id_date_fin').datepicker({format: 'yyyy-mm-dd', autoclose: true});
+{% endblock jquery %}

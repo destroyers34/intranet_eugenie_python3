@@ -1,0 +1,22 @@
+<h1>Edit Buildings</h1>
+
+<li>
+<p>{{ depense.employe }}-{{ depense.date_debut }}-{{ depense.date_fin }}</p>
+</li>
+
+<form action="{% url 'depense-edit' pk=depense.id %}" method="POST">
+{% csrf_token %}
+{{ form.management_form }}
+{% for facture in form %}
+{{ facture.as_p }}
+
+{{ facture.nested.management_form }}
+{% for frais in facture.nested %}
+{{ frais.as_p }}
+{% endfor %}
+
+{% endfor %}
+
+<input type="submit" value="Save" />
+
+</form>

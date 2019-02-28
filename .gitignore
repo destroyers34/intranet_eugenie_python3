@@ -62,3 +62,5 @@ target/
 venv_intranet_python3/
 
 intranet_eugenie_python3/local_settings\.py
+
+intranet/local_settings\.py

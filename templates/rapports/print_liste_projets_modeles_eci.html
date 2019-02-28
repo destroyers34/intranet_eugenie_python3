@@ -1,0 +1,42 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h4>EuGénie Canada Inc.</h4>
+		<h4>Liste des projets</h4>
+		<h3>{{ nom_projet }} {{ modele_projet }}</h3>
+		<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Projets</th>
+				<th>Tâches</th>
+				<th>Temps (Heures)</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td></td><th>Moyenne :</th><th>{{moyenne}}</th>
+			</tr>
+			<tr>
+				<td></td><th>Total :</th><th>{{projets_total.heures}}</th>
+			</tr>
+		</tfoot>
+		<tbody>
+		{% for projet in projets %}
+			<tr>
+			<td rowspan='{{projet.liste_taches|length}}'>{{projet.numero}}</td>
+			{% for tache in projet.liste_taches %}
+				<td>{{ tache.numero }} {{ tache.description }}</td>
+				<td>{{ tache.heure }}</td>
+				</tr>
+				<tr>
+				{% if forloop.last %}
+				<td></td>
+				<th>Total {{ projet.numero }} : </th>
+				<th>{{ projet.heure }}</th>
+				{% endif %}
+			{% endfor %}
+		</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+{% endblock %}

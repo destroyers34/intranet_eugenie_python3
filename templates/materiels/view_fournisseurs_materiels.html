@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load humanize %}
+{% block title %}Fournisseurs{% endblock title %}
+{% block nav-liste %}<li class="dropdown active">{% endblock nav-liste %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3">
+            <div class="well">
+                <h3>Fournisseurs</h3>
+                <table id="table1" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Total Matériel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fournisseur in fournisseurs %}
+                            <tr>
+                                <td><a href="{% url 'fournisseurs_materiels_details' fournisseur.id %}">{{fournisseur.nom}}</a></td>
+                                <td style="text-align:right;">{{fournisseur.total|default_if_none:"0,00"|floatformat:2|intcomma}} $</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,208 @@
+﻿{% extends "base.html" %}
+{% block title %}Liste des projets Techno-Pro Experts Inc.{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <link href="{{STATIC_URL}}css/extra.css" rel="stylesheet">
+{% endblock extrahead %}
+{% block jquery %}
+    $( "#datepicker1" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $( "#datepicker2" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $('#myTab a').click(function (e) {e.preventDefault();$(this).tab('show');})
+{% endblock jquery %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset2">
+            <div class="well">
+                <img width="160" style="float:right" src="{{ STATIC_URL }}img/logo_tpe.png">
+                <h4>Techno-Pro Experts Inc.</h4>
+                <h4>Rapport de temps de chacun des projets</h4>
+                <ul class="nav nav-tabs" id="myTab">
+                  <li><a href="#attente">En Attente</a></li>
+                  <li class="active"><a href="#actif">En Cours</a></li>
+                  <li><a href="#inactif">Compléter</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane attente" id="attente">
+                        {% if projets_attente|length > 0 %}
+                            <div class="pull-left">
+                                <h4>Projets en attente</h4>
+                            </div>
+                            <div class="pull-right">
+                                {% if user.is_superuser %}
+                                    <a class="btn btn-primary" href="{% url 'admin:projets_projet_tpe_add' %}">Ajouter un projet</a>
+                                {% endif %}
+                                <a class='btn btn-primary' href="{% url 'print_liste_projets_attente_tpe' %}">Imprimer</a>
+                                <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                            </div>
+                        <table class="table table-striped table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Numéro</th>
+                                    <th>Nom</th>
+                                    <th>Client</th>
+                                    <th>Budget</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td style="text-align: right;background-color: lightgray" colspan='2'></td>
+                                    <th style="text-align: right;background-color: lightgray">Total:</th>
+                                    <th style="text-align: right;background-color: lightgray">{{ total_attente.total_mo }} H</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for projet in projets_attente %}
+                                    <tr>
+                                        <td>{{projet.numero}}</td>
+                                        <td>{{projet.nom}}</td>
+                                        <td>{% if projet.client %}<a href="{% url 'client_details_eci' projet.client.id %}">{{projet.client.nom}}</a>{% else %}-{% endif %}</td>
+                                        <td style="text-align: right;">{{projet.budget_mo}} H</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            <a class='btn btn-primary' href="{% url 'print_liste_projets_attente_tpe' %}">Imprimer</a>
+                            <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                        </div>
+                        {% else %}
+                            <h5>Il n'y a aucun projets en attente</h5>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane active" id="actif">
+                        {% if projets_actif|length > 0 %}
+                            <div class="pull-left">
+                                <h4>Projets actif</h4>
+                            </div>
+                            <div class="pull-right">
+                                {% if user.is_superuser %}
+                                    <a class='btn btn-primary' href="{% url 'admin:projets_projet_tpe_add' %}">Ajouter un projet</a>
+                                {% endif %}
+                                <a class='btn btn-primary' href="{% url 'print_liste_projets_actif_tpe' %}">Imprimer</a>
+                                <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                            </div>
+                        <table class="table table-striped table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Numéro</th>
+                                    <th>Nom</th>
+                                    <th>Client</th>
+                                    <th>Budget</th>
+                                    <th>Temps</th>
+                                    <th>% MO</th>
+                                    <th>Restant (J)</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td style="text-align: right;background-color: lightgray" colspan='2'></td>
+                                    <th style="text-align: right;background-color: lightgray">Total:</th>
+                                    <th style="text-align: right;background-color: lightgray">{{total_actif.total_mo}} H</th>
+                                    <th style="text-align: right;background-color: lightgray">{{total_actif.total_heure}} H</th>
+                                    <th style="text-align: right;background-color: lightgray">{{total_actif.total_pourcent}} %</th>
+                                    <th style="text-align: right;background-color: lightgray"></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for projet in projets_actif %}
+                                    <tr>
+                                        {% if projet.heure %}
+                                            <td><a href="{% url 'projet_details_tpe' projet.numero %}">{{projet.numero}}</a></td>
+                                            <td><a href="{% url 'liste_projets_noms_tpe' projet.nom %}">{{projet.nom}}</a></td>
+                                        {% else %}
+                                            <td>{{projet.numero}}</td>
+                                            <td>{{projet.nom}}</td>
+                                        {% endif %}
+                                        <td>
+                                            {% if projet.client %}
+                                                <a href="{% url 'client_details_tpe' projet.client.id %}">{{projet.client.nom}}</a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: right;">{{projet.budget_mo|default_if_none:"0,00"}} H</td>
+                                        <td style="text-align: right;">{{projet.heure|default_if_none:"0,00"}} H</td>
+                                        <td style="text-align: right;">{{projet.pourcent|default_if_none:"0,00"}} %</td>
+                                        <td style="text-align: right;">{{projet.jours_restant}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            <a class='btn btn-primary' href="{% url 'print_liste_projets_actif_tpe' %}">Imprimer</a>
+                            <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                        </div>
+                        {% else %}
+                            <h5>Il n'y a aucun projets actif</h5>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane" id="inactif">
+                        {% if projets_inactif|length > 0 %}
+                            <div class="pull-left">
+                                <h4>Projets inactif</h4>
+                            </div>
+                            <div class="pull-right">
+                                {% if user.is_superuser %}
+                                    <a class='btn btn-primary' href="{% url 'admin:projets_projet_tpe_add' %}">Ajouter un projet</a>
+                                {% endif %}
+                                <a class='btn btn-primary' href="{% url 'print_liste_projets_complet_tpe' %}">Imprimer</a>
+                                <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                            </div>
+                        <table class="table table-striped table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Numéro</th>
+                                    <th>Nom</th>
+                                    <th>Client</th>
+                                    <th>Budget</th>
+                                    <th>Temps</th>
+                                    <th>% MO</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td style="text-align: right;background-color: lightgray" colspan='3'></td>
+                                    <th style="text-align: right;background-color: lightgray">Total:</th>
+                                    <th style="text-align: right;background-color: lightgray">{{total_inactif.total_heure}} H</th>
+                                    <td style="text-align: right;background-color: lightgray"></td>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for projet in projets_inactif %}
+                                    <tr>
+                                        {% if projet.heure %}
+                                            <td><a href="{% url 'projet_details_tpe' projet.numero %}">{{projet.numero}}</a></td>
+                                            <td><a href="{% url 'liste_projets_noms_tpe' projet.nom %}">{{projet.nom}}</a></td>
+                                        {% else %}
+                                            <td>{{projet.numero}}</td>
+                                            <td>{{projet.nom}}</td>
+                                        {% endif %}
+                                        <td>
+                                            {% if projet.client %}
+                                                <a href="{% url 'client_details_eci' projet.client.id %}">{{projet.client.nom}}</a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: right;">{{projet.budget_mo}} H</td>
+                                        <td style="text-align: right;">{{projet.heure}} H</td>
+                                        <td style="text-align: right;">{{projet.pourcent}} %</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pull-right">
+                            <a class='btn btn-primary' href="{% url 'print_liste_projets_complet_tpe' %}">Imprimer</a>
+                            <a class='btn btn-primary' href="{% url 'xls_liste_projets_tpe' %}">.xls</a>
+                        </div>
+                        {% else %}
+                            <h5>Il n'y a aucun projets inactif</h5>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

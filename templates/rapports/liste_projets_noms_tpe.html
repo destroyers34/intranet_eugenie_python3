@@ -1,0 +1,50 @@
+﻿{% extends "base.html" %}
+{% block title %}Liste des modèles{% endblock title %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6 offset3">
+            <div class="well">
+                <div class="pull-left">
+                    <br />
+                    <h4>Techno-Pro Experts Inc.</h4>
+                    <h4>Liste des projets</h4>
+                    <h3>{{ nom_projet }}</h3>
+                    <br />
+                </div>
+                <div class="pull-right text-right">
+                    <img width="160" src="{{ STATIC_URL }}img/logo_tpe.png"><br /><br />
+                    <a class='btn btn-primary' href="{% url 'print_liste_projets_noms_tpe' nom_projet %}">Imprimer</a>
+                    <a class='btn btn-primary' href="{% url 'xls_liste_projets_noms_tpe' nom_projet %}">.xls</a>
+                </div>
+                <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Numéros</th>
+                        <th>Temps</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray">Total:</th>
+                        <th style="text-align: right;background-color: lightgray">{{projets_total.heures}} H</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                {% for projet in projets %}
+                    <tr>
+                        <td><a href="{% url 'projet_details_tpe' projet.numero %}">{{ projet.numero }}</a></td>
+                        <td style="text-align: right;">{{ projet.heure|default_if_none:"0.00" }} H</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+                <div class="pull-right">
+                    <a class='btn btn-primary' href="{% url 'print_liste_projets_noms_tpe' nom_projet %}">Imprimer</a>
+                    <a class='btn btn-primary' href="{% url 'xls_liste_projets_noms_tpe' nom_projet %}">.xls</a>
+                </div>
+                <br /><br />
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,285 @@
+﻿{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Liste des projets EuGénie Canada Inc.{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Rapport de temps de chacun des projets</h3>
+        </div>
+    </div>
+    <div class="row top-buffer jumbotron">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs" id="myTab">
+                <li><a href="#attente">En Attente</a></li>
+                <li class="active"><a href="#actif">En Cours</a></li>
+                <li><a href="#inactif">Compléter</a></li>
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div class="tab-pane attente" id="attente">
+                    {% if projets_attente|length > 0 %}
+                        <div class="row top-buffer">
+                            <div class="col-md-9">
+                                <h4>Projets en attente</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="pull-right">
+                                    {% if user.is_superuser %}
+                                        <a target='_blank' href="{% url 'admin:projets_projet_eugenie_add' %}"><button type="button" class="btn btn-primary top-buffer">Ajouter un projet</button></a>
+                                    {% endif %}
+                                    <a href="{% url 'print_liste_projets_attente_eci' %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                                    <a href="{% url 'xls_liste_projets_eci' %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="stacktable-attente" class="table table-striped table-bordered table-condensed top-buffer">
+                                    <thead>
+                                        <tr>
+                                            <th>Projet</th>
+                                            <th>Client</th>
+                                            <th>Budget (H)</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="total">Total:</th>
+                                            <th class="total"></th>
+                                            <th class="total">{{ total_attente.total_mo }} H</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% for projet in projets_attente %}
+                                        <tr>
+                                            <td>{{projet.numero}} {{projet.nom}} {{projet.modele}}</td>
+                                            <td>{% if projet.client %}<a href="{% url 'client_details_eci' projet.client.id %}">{{projet.client.nom}}</a>{% else %}-{% endif %}</td>
+                                            <td class="text-right">{{projet.budget_mo}} H</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pull-right">
+                                <div class="col-md-12">
+                                    <a class='btn btn-primary' href="{% url 'print_liste_projets_attente_eci' %}">Imprimer</a>
+                                    <a class='btn btn-primary' href="{% url 'xls_liste_projets_eci' %}">.xls</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h4>Il n'y a aucun projets en attente</h4>
+                    {% endif %}
+                </div>
+                <div class="tab-pane active" id="actif">
+                    {% if projets_actif|length > 0 %}
+                        <div class="row top-buffer">
+                            <div class="col-md-8">
+                                <h4>Projets actif</h4>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-right">
+                                    {% if user.is_superuser %}
+                                        <a target='_blank' href="{% url 'admin:projets_projet_eugenie_add' %}"><button type="button" class="btn btn-primary top-buffer">Ajouter un projet</button></a>
+                                    {% endif %}
+                                    <a href="{% url 'projets_gantt_eci' %}"><button type="button" class="btn btn-primary top-buffer">Diagramme de Gantt</button></a>
+                                    <a href="{% url 'print_liste_projets_actif_eci' %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                                    <a href="{% url 'xls_liste_projets_eci' %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="stacktable-actif" class="table table-striped table-bordered table-condensed top-buffer">
+                                    <thead>
+                                        <tr>
+                                            <th>Projet</th>
+                                            <th>Client</th>
+                                            <th>Budget</th>
+                                            <th>Temps</th>
+                                            <th>Matériel</th>
+                                            <th class='center-text'>Priorité</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="total">Total:</th>
+                                            <th class="total"></th>
+                                            <th class="total">{{total_actif.total_mo}} H</th>
+                                            <th class="total">
+                                                <a href="#" class="link" data-toggle="tooltip" title=""
+                                                   data-original-title="{{ total_actif.total_pourcent|default_if_none:0.00 }} % du budget MO">
+                                                    {{ total_actif.total_heure }} H
+                                                </a>
+                                            </th>
+                                            <td class="total" colspan='3'></td>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for projet in projets_actif %}
+                                            <tr>
+                                                {% if projet.heure %}
+                                                    <td>
+                                                        <a href="{% url 'projet_details_eci' projet.numero %}">{{projet.numero}}</a>
+                                                        <a href="{% url 'liste_projets_noms_eci' projet.nom %}">{{projet.nom}}</a>
+                                                        <a href="{% url 'liste_projets_modeles_eci' projet.nom projet.modele %}">{{projet.modele}}</a>
+                                                    </td>
+                                                {% else %}
+                                                    <td>{{projet.numero}} {{projet.nom}} {{projet.modele}}</td>
+                                                {% endif %}
+                                                <td>
+                                                    {% if projet.client %}
+                                                        <a href="{% url 'client_details_eci' projet.client.id %}">{{projet.client.nom}}</a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-right">{{projet.budget_mo|default_if_none:"0,00"}} H</td>
+                                                <td class="text-right">
+                                                    {% if projet.non_approve_time > 0 %}
+                                                        <a href="#" class="link text-warning" data-toggle="tooltip" title=""
+                                                           data-original-title="Il y a {{ projet.non_approve_time }} heures non-approuvé. {{ projet.pourcent|default_if_none:"0,00" }}&nbsp;% du budget MO.">
+                                                            {{projet.heure|default_if_none:"0,00"}} H
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="#" class="link text-success" data-toggle="tooltip" title=""
+                                                           data-original-title="{{ projet.pourcent|default_if_none:"0,00" }}&nbsp;% du budget MO">
+                                                            {{ projet.heure|default_if_none:"0,00" }} H
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ projet.budget_materiel|default_if_none:"0,00"|floatformat:2|intcomma }}
+                                                    $
+                                                </td>
+                                                <td class='center-text'>
+                                                    <a href="#"
+                                                       class="link {% if projet.jours_restant > 0 %}text-success{% else %}text-error{% endif %}"
+                                                       data-toggle="tooltip" title=""
+                                                       data-original-title="{{ projet.jours_restant }} jours restant">
+                                                        {{ projet.priority }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="pull-right">
+                            <div class="col-md-12">
+                                <a class='btn btn-primary' href="{% url 'print_liste_projets_actif_eci' %}">Imprimer</a>
+                                <a class='btn btn-primary' href="{% url 'xls_liste_projets_eci' %}">.xls</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                        <h4>Il n'y a aucun projets actif</h4>
+                    {% endif %}
+                </div>
+                <div class="tab-pane" id="inactif">
+                    {% if projets_inactif|length > 0 %}
+                        <div class="row top-buffer">
+                            <div class="col-md-8">
+                                <h4>Projets inactif</h4>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-right">
+                                    {% if user.is_superuser %}
+                                        <a target='_blank' href="{% url 'admin:projets_projet_eugenie_add' %}"><button type="button" class="btn btn-primary top-buffer">Ajouter un projet</button></a>
+                                    {% endif %}
+                                    <a href="{% url 'print_liste_projets_complet_eci' %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                                    <a href="{% url 'xls_liste_projets_eci' %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 top-buffer">
+                                <table id="stacktable-inactif" class="table table-striped table-bordered table-condensed top-buffer">
+                                    <thead>
+                                        <tr>
+                                            <th>Numéro</th>
+                                            <th>Nom</th>
+                                            <th>Modèle</th>
+                                            <th>Client</th>
+                                            <th>Budget</th>
+                                            <th>Temps</th>
+                                            <th>% MO</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="total">Total:</th>
+                                            <th class="total"></th>
+                                            <th class="total"></th>
+                                            <th class="total"></th>
+                                            <th class="total"></th>
+                                            <th class="total">{{total_inactif.total_heure}} H</th>
+                                            <td class="total"></td>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for projet in projets_inactif %}
+                                            <tr>
+                                                {% if projet.heure %}
+                                                    <td><a href="{% url 'projet_details_eci' projet.numero %}">{{projet.numero}}</a></td>
+                                                    <td><a href="{% url 'liste_projets_noms_eci' projet.nom %}">{{projet.nom}}</a></td>
+                                                    <td><a href="{% url 'liste_projets_modeles_eci' projet.nom projet.modele %}">{{projet.modele}}</a></td>
+                                                {% else %}
+                                                    <td>{{projet.numero}}</td>
+                                                    <td>{{projet.nom}}</td>
+                                                    <td>{{projet.modele}}</td>
+                                                {% endif %}
+                                                <td>
+                                                    {% if projet.client %}
+                                                        <a href="{% url 'client_details_eci' projet.client.id %}">{{projet.client.nom}}</a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-right">{{projet.budget_mo|default_if_none:"0,00"}} H</td>
+                                                <td class="text-right">
+                                                    {% if projet.non_approve_time > 0 %}
+                                                        <a href="#" class="link text-warning" data-toggle="tooltip" title="" data-original-title="Il y a {{ projet.non_approve_time }} heures non-approuvé">
+                                                            {{projet.heure|default_if_none:"0,00"}} H
+                                                        </a>
+                                                    {% else %}
+                                                        {{projet.heure|default_if_none:"0,00"}} H
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-right">{{projet.pourcent|default_if_none:"0,00"}} %</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pull-right">
+                                <div class="col-md-12">
+                                    <a class='btn btn-primary' href="{% url 'print_liste_projets_complet_eci' %}">Imprimer</a>
+                                    <a class='btn btn-primary' href="{% url 'xls_liste_projets_eci' %}">.xls</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h5>Il n'y a aucun projets inactif</h5>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $( "#datepicker1" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $( "#datepicker2" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $('#stacktable-attente').stacktable();
+    $('#stacktable-actif').stacktable();
+    $('#stacktable-inactif').stacktable();
+    $('#myTab a').click(function (e) {e.preventDefault();$(this).tab('show');})
+    $('.link').tooltip()
+{% endblock jquery %}

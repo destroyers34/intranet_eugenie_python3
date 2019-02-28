@@ -1,0 +1,42 @@
+﻿{% extends "print_base.html" %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h3>EuGénie Canada Inc.</h3>
+		<h4>Rapport de temps de chacun des projets complets</h3>
+		<h4>{{date}}</h3>
+			  {% if projets_inactif|length > 0 %}
+			  <table class="table table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th>Numéro</th>
+						<th>Nom</th>
+						<th>Modèle</th>
+						<th>Client</th>
+						<th class='center-text'>Budget (H)</th>
+						<th class='center-text'>Temps (H)</th>
+						<th class='center-text'>% MO</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan='4'></td><th>Total:</th><th class='center-text'>{{total_inactif.total_heure}}</th><td></td>
+					</tr>
+				</tfoot>
+				<tbody>
+			{% for projet in projets_inactif %}
+				<tr>
+				<td>{{projet.numero}}</td>
+				<td>{{projet.nom}}</td>
+				<td>{{projet.modele}}</td>
+				<td>{{projet.client.nom}}</td>
+				<td class='center-text'>{{projet.budget_mo|default_if_none:"0,00"}}</td>
+				<td class='center-text'>{{projet.heure|default_if_none:"0,00"}}</td>
+				<td class='center-text'>{{projet.pourcent|default_if_none:"0,00"}} %</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+			</table>
+			{% else %}
+			<p>Il n'y a aucun projets inactif</p>
+			{% endif %}
+{% endblock %}

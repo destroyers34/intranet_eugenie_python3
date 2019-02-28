@@ -1,0 +1,76 @@
+﻿{% extends "print_base.html" %}
+{% load humanize %}
+{% block title %}Rapports{% endblock title %}
+{% block content %}
+		<h4>EuGénie Canada Inc.</h4>
+		<h4>Rapport de temps des tâches du projet</h4>
+		<h3>{{ numero_projet }}</h3>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>Tâche</th>
+					<th>Temps (H)</th>
+                    <th>Main d'oeuvre</th>
+				</tr>
+			</thead>
+			<tbody>
+            {% for bloc in blocs %}
+                {% if forloop.last %}
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray">Total MO:</th>
+                        <th style="text-align: right;background-color: lightgray">{{ bloc.H }} H</th>
+                        <th style="text-align: right;background-color: lightgray">{{ bloc.MO|default_if_none:"0,00"|floatformat:2|intcomma }}
+                            $
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Fournisseur</th>
+                        <th>Catégorie</th>
+                        <th>Montant</th>
+                    </tr>
+                    {% if materiels %}
+                        {% for materiel in materiels %}
+                            <tr>
+                                <td>{{ materiel.fournisseur }}</td>
+                                <td>{{ materiel.categorie }}</td>
+                                <td style="text-align: right">{{ materiel.montant|default_if_none:"0,00"|floatformat:2|intcomma }}
+                                    $
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Aucun matériel pour ce projet</td>
+                        </tr>
+                    {% endif %}
+                    <tfoot>
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray" colspan="2">Total matériel:</th>
+                        <th style="text-align: right;background-color: lightgray">{{ materiel_total.total|default_if_none:"0,00"|floatformat:2|intcomma }}
+                            $
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray" colspan="2">Total MO:</th>
+                        <th style="text-align: right;background-color: lightgray">{{ bloc.MO|default_if_none:"0,00"|floatformat:2|intcomma }}
+                            $
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: right;background-color: lightgray" colspan="2">Total:</th>
+                        <th style="text-align: right;background-color: lightgray">{{ total|default_if_none:"0,00"|floatformat:2|intcomma }}
+                            $
+                        </th>
+                    </tr>
+                    </tfoot>
+                {% else %}
+                    <tr>
+                        <td>{{ bloc.tache }}</td>
+                        <td style="text-align: right">{{ bloc.H }} H</td>
+                        <td style="text-align: right">{{ bloc.MO|floatformat:2|intcomma }} $</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+		</table>
+{% endblock %}

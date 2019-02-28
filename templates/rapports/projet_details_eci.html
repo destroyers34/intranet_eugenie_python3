@@ -1,0 +1,132 @@
+﻿{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Rapports de temps des tâches du projet{% endblock title %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css\datepicker.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css\stacktable.css" />
+{% endblock extrahead %}
+{% block nav-rapport %}<li class="dropdown active">{% endblock nav-rapport %}
+{% block content %}
+    <div class="row top-buffer">
+        <div class="col-md-3">
+            <img class="img-responsive" src="{{ STATIC_URL }}img/logo_eugenie.png"><br />
+        </div>
+        <div class="col-md-3 col-md-offset-6">
+            <h3>EuGénie Canada Inc.</h3>
+            <h3>Rapport de temps des tâches du projet</h3>
+        </div>
+    </div>
+    <div class="row top-buffer jumbotron">
+        <div class="col-md-6">
+            <h2>{{ projet.numero }} {{ projet.nom }} {{ projet.modele }}</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="pull-right">
+                <a href="{% url 'rapport_complet_eci' projet.numero %}"><button type="button" class="btn btn-primary top-buffer">Rapport complet</button></a>
+                <a href="{% url 'print_projet_details_eci' projet.numero %}"><button type="button" class="btn btn-primary top-buffer">Imprimer</button></a>
+                <a href="{% url 'xls_projet_details_eci' projet.numero %}"><button type="button" class="btn btn-primary top-buffer">.xls</button></a>
+            </div>
+        </div>
+        <div class="col-md-12 top-buffer">
+            <table id="tachetable" class="table table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Tâche</th>
+                        <th>Détails</th>
+                        <th>Temps</th>
+                        <th>Main d'oeuvre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for bloc in blocs %}
+                    {% if forloop.last %}
+                        <tr>
+                            <th class="total">Total MO:</th>
+                            <td class="total"></td>
+                            <th class="total">{{ bloc.H }} H</th>
+                            <th class="total">{{ bloc.MO|default_if_none:"0,00"|floatformat:2|intcomma }} $</th>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td><a href="{% url 'tache_details_eci' bloc.NT %}">{{ bloc.tache }}</a></td>
+                            <td>
+                                <a href="{% url 'projet_tache_details_eci' projet.numero bloc.NT %}"><i class="icon-user"></i></a>
+                            </td>
+                            <td class="text-right">{{ bloc.H }} H</td>
+                            <td class="text-right">{{ bloc.MO|floatformat:2|intcomma }} $</td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <table id="materieltable" class="table table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Fournisseur</th>
+                        <th>Catégorie</th>
+                        <th>Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if materiels %}
+                        {% for materiel in materiels %}
+                            <tr>
+                                <td><a href="{% url 'fournisseurs_materiels_details' materiel.fournisseur.id %}">{{ materiel.fournisseur }}</a></td>
+                                <td>{{ materiel.categorie }}</td>
+                                <td class="total">{{ materiel.montant|default_if_none:"0,00"|floatformat:2|intcomma }} $</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Aucun matériel pour ce projet</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="total">Total matériel:</th>
+                        <td class="total"></td>
+                        <th class="total">{{ materiel_total.total|default_if_none:"0,00"|floatformat:2|intcomma }} $</th>
+                    </tr>
+                    <tr>
+                        <th class="total">Total Main d'oeuvre + Matériel:</th>
+                        <td class="total"></td>
+                        <th class="total">{{ total|default_if_none:"0,00"|floatformat:2|intcomma }} $</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="pull-left">
+                <form class="form-inline" action="" method="post">
+                    {% csrf_token %}
+                    <h5>Affichez les blocs de temps de l'intervalle suivant:</h5>
+                    <p>
+                        <label for="datepicker1">Date début:</label>
+                        <input class="input-small" id="datepicker1" type="text" name="date_debut" />
+                        <label for="datepicker2"> Date fin:</label>
+                        <input class="input-small" type="text" name="date_fin" id="datepicker2" value="{{ date }}" />
+                        <input class="btn btn-primary" type="submit" value="Rechercher" />
+                    </p>
+                    {% if form.errors %}
+                        <h5 class="text-error">Vous n'avez pas remplie les champs correctement</h5>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="pull-right">
+                <a class='btn btn-primary' href="{% url 'print_projet_details_eci' projet.numero %}">Imprimer</a>
+                <a class='btn btn-primary' href="{% url 'xls_projet_details_eci' projet.numero %}">.xls</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajquery %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/stacktable.js"></script>
+{% endblock extrajquery %}
+{% block jquery %}
+    $( "#datepicker1" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $( "#datepicker2" ).datepicker({format: 'yyyy-mm-dd', autoclose: true});
+    $('#tachetable').stacktable();
+    $('#materieltable').stacktable();
+{% endblock jquery %}

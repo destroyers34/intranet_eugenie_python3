@@ -1,0 +1,42 @@
+{% extends "print_base.html" %}
+{% load humanize %}
+{% block title %}Listes de prix{% endblock title %}
+{% block content %}
+		<h1>{{ fournisseur.nom }}</h1>
+		<h4>Liste de prix</h4>
+		<table>
+			<thead>
+				<tr>
+					<th style="width: 20%"></th>
+					<th style="width: 50%"></th>
+					<th style="width: 15%; text-align: right;">MODÈLE</th>
+					<th style="width: 15%; text-align: right;">PRIX&nbsp;($CA)</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for machine in liste_machines %}
+					{% ifchanged machine.categorie %}
+					<tr>
+						<th></th>
+                        <th colspan='3' style="text-align: left; text-transform: uppercase; text-decoration: underline;"><h3>{{ machine.categorie }}</h3></th>
+					</tr>
+					{% endifchanged %}
+					<tr style="border-bottom: 1px solid #000;">
+						<th style="text-align: left;">{{ machine.description }}</th>
+                        <td style="text-align: left;">{{ machine.details }}</td>
+						<td style="text-align: right;">{{ machine.numero }}</td>
+						<td style="text-align: right;">$&nbsp;{{ machine.plMin |floatformat:2|intcomma }}</td>
+					</tr>
+                    {% for option in machine.options_machine.all %}
+                        <tr>
+                            <th style="text-align: right;">{% if forloop.first %}Options{% else %}{% endif %}</th>
+                            <td>{{ option.details }}</td>
+                            <td style="text-align: right;">{{ option.numero }}</td>
+                            <td style="text-align: right;">$&nbsp;{{ option.plMin |floatformat:2|intcomma }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr><td colspan="4"><br /></td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+{% endblock %}

@@ -1,0 +1,17 @@
+﻿<h4>Techno-Pro Experts Inc.</h4>
+<h4>Rapport de temps de chacune des tâches</h4>
+<table>
+	<tr>
+		<th>Tâche</th>
+		<th>Temps Total</th>
+	</tr>
+	{% for tache in taches %}
+	<tr>
+		<td>{{tache.numero}} {{tache.description}}</td>
+		<td>{{tache.heure|default_if_none:"0.00"}}</td>
+	</tr>
+	{% endfor %}
+	<tr>
+		<th>Total:</th><th>{{total.heures|default_if_none:"0.00"}}</th>
+	</tr>
+</table>

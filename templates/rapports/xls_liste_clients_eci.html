@@ -1,0 +1,24 @@
+﻿<h3>EuGénie Canada Inc.</h3>
+<h3>Liste des projets par clients</h3>
+<table>
+	<tr>
+		<th>Clients</th>
+		<th>Numéros</th>
+		<th>Noms</th>
+		<th>Modèles</th>
+	</tr>
+{% for clients in liste_clients %}
+	<tr>
+	<td>{{clients.nom}}</td>
+	{% for projets in clients.liste_projets %}
+		{% if forloop.first %}{% else %}
+		<td></td>
+		{% endif %}
+		<td>{{ projets.numero }}</td>
+		<td>{{ projets.nom }}</td>
+		<td>{{ projets.modele }}</td>
+		</tr>
+		<tr>
+	{% endfor %}
+{% endfor %}
+</table>
